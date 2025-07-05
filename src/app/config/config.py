@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     ENV: str = "local"
     API_V1_STR: str = "/api/v1"
     ENVIRONMENT: str = os.environ.get("ENV", "DEV")
-    CORS_ALLOWED_ORIGINS: List[str] = []
+    # CORS_ALLOWED_ORIGINS: List[str] = []
     SITE_DOMAIN: str = "codeground"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 14
@@ -31,5 +31,15 @@ class Settings(BaseSettings):
     @property
     def DB_URL(self) -> str:
         return f"postgresql+psycopg2://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+
+    @property
+    def CORS_ALLOWED_ORIGINS(self) -> List[str]:
+        # 환경변수로 들어온 값을 파싱
+        raw = os.environ.get("CORS_ALLOWED_ORIGINS", "")
+        if raw:
+            # 쉼표로 구분된 문자열을 리스트로 변환
+            return [o.strip() for o in raw.split(",") if o.strip()]
+        return []
+
 
 settings = Settings()

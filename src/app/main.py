@@ -41,10 +41,10 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ALLOWED_ORIGINS,  # Specify allowed origins
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE"],  # Specify allowed methods
-    allow_headers=["Authorization", "Content-Type"],  # Specify allowed headers
+    allow_origins=settings.CORS_ALLOWED_ORIGINS,  # 위에서 설정된 도메인
+    allow_credentials=True,  # 쿠키 사용 시 반드시 True
+    allow_methods=["*"],  # 모든 HTTP 메소드 허용 (또는 필요한 메소드만 설정)
+    allow_headers=["*"],  # 모든 헤더 허용 (필요한 헤더만 설정해도 좋음)
 )
 
 app.include_router(router=auth_router, prefix=settings.API_V1_STR)
@@ -59,6 +59,7 @@ app.include_router(router=analysis_router, prefix=settings.API_V1_STR)
 async def health_check():
     return JSONResponse({"status": "ok"})
 
+print("CORS_ALLOWED_ORIGINS >>>", settings.CORS_ALLOWED_ORIGINS)
 
 # test
 if __name__ == "__main__":
