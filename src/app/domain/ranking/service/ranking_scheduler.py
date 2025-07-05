@@ -30,5 +30,5 @@ def start_ranking_scheduler():
     # scheduler.add_job(refresh_ranking_job, trigger, id="daily_ranking_refresh")
 
     # 테스트 용
-    scheduler.add_job(refresh_ranking_job, IntervalTrigger(minutes=1))
+    scheduler.add_job(refresh_ranking_job, IntervalTrigger(minutes=360))
     scheduler.start()

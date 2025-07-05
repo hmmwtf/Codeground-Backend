@@ -1,7 +1,7 @@
 import uvicorn
 from pathlib import Path
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,6 +15,9 @@ from src.app.config.config import settings
 from src.app.domain.match.service.match_service import match_service
 from src.app.domain.ranking.router.ranking_controller import router as ranking_router
 from src.app.domain.ranking.service.ranking_scheduler import start_ranking_scheduler
+from starlette.middleware.base import BaseHTTPMiddleware
+
+from src.app.utils.middlewares.domain_limiter import DomainLimiterMiddleware
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_DIR = BASE_DIR / "resource" / "static"
@@ -31,11 +34,14 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+# 미들웨어 등록
+app.add_middleware(DomainLimiterMiddleware)
+
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Specify allowed origins
+    allow_origins=settings.CORS_ALLOWED_ORIGINS,  # Specify allowed origins
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],  # Specify allowed methods
     allow_headers=["Authorization", "Content-Type"],  # Specify allowed headers

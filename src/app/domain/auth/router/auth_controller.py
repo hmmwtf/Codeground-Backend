@@ -14,7 +14,7 @@ router = APIRouter()
 
 DB = Annotated[Session, Depends(get_db)]
 
-
+# access token을 cookie를 줘야하며 또한 이 쿠키는 보안 관련 옵션이 꼭 필요함
 @router.post("/sign-up")
 async def sign_up(sign_up_request: schemas.SignupRequest, db: DB):
     try:
