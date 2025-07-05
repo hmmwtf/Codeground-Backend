@@ -4,6 +4,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException, Response
 
+from src.app.config.config import settings
 from src.app.core.database import get_db
 from src.app.domain.auth.schemas import auth_schemas as schemas
 from src.app.domain.auth.service import auth_service as service
@@ -14,9 +15,8 @@ router = APIRouter()
 
 DB = Annotated[Session, Depends(get_db)]
 
-# access token을 cookie를 줘야하며 또한 이 쿠키는 보안 관련 옵션이 꼭 필요함
 @router.post("/sign-up")
-async def sign_up(sign_up_request: schemas.SignupRequest, db: DB):
+async def sign_up(sign_up_request: schemas.SignupRequest, db: DB, response: Response):
     try:
         await service.check_duplicate_email(db, str(sign_up_request.email))
         await service.check_duplicate_nickname(db, sign_up_request.nickname)
@@ -50,7 +50,7 @@ async def login(
             value=access_token,
             httponly=True,
             max_age=60 * 60 * 24,
-            secure=False,
+            secure=settings.ENV != "local",
             samesite="lax",
         )
 
