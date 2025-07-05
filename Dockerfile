@@ -7,7 +7,8 @@ ENV TZ=${TZ} \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     POETRY_VERSION=2.1.3 \
-    POETRY_VIRTUALENVS_CREATE=false  # poetry가 venv를 따로 만들지 않도록 설정
+    # poetry가 venv를 따로 만들지 않도록 설정
+    POETRY_VIRTUALENVS_CREATE=false
 
 # 3. 의존성 및 Poetry 설치 (PostgreSQL 헤더/컴파일러 포함)
 RUN apt-get update && \
